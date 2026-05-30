@@ -1,195 +1,169 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 
 type Project = {
   index: string;
   title: string;
-  tag: string;
+  subtitle?: string;
   body: string;
+  tags: string[];
   accent: string;
-  visual: "road" | "graph" | "can";
+  status?: string;
 };
 
 const projects: Project[] = [
   {
     index: "01",
-    title: "Intelligent Road Surface Monitoring",
-    tag: "Vibration sensing · Random Forest",
-    body: "An embedded vibration-sensing platform that classifies road surface conditions in real time. Accelerometer data from vehicle-mounted IMUs is windowed, feature-extracted, and passed to a Random Forest classifier deployed on-device—enabling fleet-scale surface monitoring without uploading raw streams.",
+    title: "R-SENSE",
+    subtitle: "Road Condition Monitoring System",
+    body:
+      "In heavy-duty operational environments with constrained connectivity, proactive road maintenance requires robust monitoring. To address this, I developed an IoT-based road condition monitoring system. I implemented edge computing on a Raspberry Pi integrated with RTOS principles for deterministic processing, and utilized LoRa communication for reliable, low-power, long-range data transmission. By applying signal processing and multi-domain feature extraction combined with semi-supervised learning, the system successfully achieved high adaptability in road condition classification even with limited labeled data scenarios.",
+    tags: ["LoRa", "Raspberry Pi", "freeRTOS", "Machine Learning"],
     accent: "oklch(0.86 0.08 220)",
-    visual: "road",
   },
   {
     index: "02",
-    title: "Competitive Intelligence Engine",
-    tag: "GraphRAG · LLMs · Knowledge Graphs",
-    body: "A multi-stage reasoning architecture for heavy equipment market analysis. The pipeline combines GraphRAG over a curated industry knowledge graph with LLM-driven synthesis, producing structured competitor briefs, capability deltas, and pricing context from heterogeneous public sources.",
+    title: "METRICS",
+    subtitle: "Volume Estimation for Irregular Shapes",
+    body:
+      "Industrial environments require fast and reliable material measurement, particularly for irregular material loads in dump trucks where cloud dependency introduces unacceptable latency. I built an edge-based volume estimation system that utilizes a depth camera to capture 3D surface data. By engineering an on-device processing architecture and applying geometric modeling alongside spatial analysis, I minimized latency and significantly improved volume estimation accuracy under non-uniform surface conditions.",
+    tags: ["Edge Computing", "Machine Learning", "Depth Sensing"],
     accent: "oklch(0.88 0.08 75)",
-    visual: "graph",
   },
   {
     index: "03",
-    title: "Heavy Vehicle Data Logging",
-    tag: "Scania SESAMM 7 · CAN bus · Telemetry",
-    body: "End-to-end data acquisition for heavy vehicles built around the Scania SESAMM 7 logger and CAN bus telemetry. Includes signal selection, in-cab harnessing, ingestion to a time-series backend, and a real-time monitoring interface used by engineers in the field.",
+    title: "CAN Bus Data Acquisition",
+    subtitle: "Telemetry for Heavy Vehicles",
+    body:
+      "Extracting accurate vehicle telemetry data is critical for advanced diagnostics and performance monitoring in heavy vehicles. I engineered a robust CAN bus data acquisition architecture by thoroughly analyzing vehicle communication protocols and identifying key ECU interface specifications from technical datasheets. Using a DFRobot CAN bus shield, I established direct communication by interfacing CAN High (CANH) and CAN Low (CANL) lines, successfully enabling the structured acquisition of external ECU-based data for further analysis.",
+    tags: ["CANbus", "Arduino", "Esp32"],
     accent: "oklch(0.84 0.05 250)",
-    visual: "can",
+  },
+  {
+    index: "04",
+    title: "Edge AI Self-Diagnostic System",
+    subtitle: "On-Device Predictive Maintenance",
+    status: "On research",
+    body:
+      "To reduce dependency on cloud connectivity and enable intelligent predictive maintenance in heavy-duty vehicles, an on-device diagnostic solution is required. I am developing an edge-deployed AI system integrating lightweight LLM capabilities (≈7B scale) for real-time self-diagnostic analysis. By applying model quantization, parameter optimization, and implementing a Retrieval-Augmented Generation (RAG) pipeline with precise chunking strategies, the system effectively executes context-aware reasoning and fault detection directly within constrained edge hardware environments.",
+    tags: ["LLM", "LangGraph", "graphRAG", "neo4j", "qdrant", "Nvidia Jetson Nano & Orin"],
+    accent: "oklch(0.82 0.1 160)",
   },
 ];
 
-function Visual({ kind, accent }: { kind: Project["visual"]; accent: string }) {
-  if (kind === "road") {
-    return (
-      <svg viewBox="0 0 400 300" className="h-full w-full">
-        <defs>
-          <linearGradient id="rg" x1="0" x2="1">
-            <stop offset="0" stopColor={accent} stopOpacity="0.7" />
-            <stop offset="1" stopColor={accent} stopOpacity="0.1" />
-          </linearGradient>
-        </defs>
-        {Array.from({ length: 22 }).map((_, i) => {
-          const x = 20 + i * 17;
-          const h = 40 + Math.sin(i * 0.9) * 30 + Math.cos(i * 0.4) * 20;
-          return (
-            <motion.line
-              key={i}
-              x1={x}
-              x2={x}
-              y1={150}
-              y2={150 - h}
-              stroke="url(#rg)"
-              strokeWidth="3"
-              strokeLinecap="round"
-              initial={{ pathLength: 0 }}
-              whileInView={{ pathLength: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2, delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}
-            />
-          );
-        })}
-        <line x1="0" y1="200" x2="400" y2="200" stroke="oklch(0.85 0.01 270)" strokeDasharray="6 8" />
-        <line x1="0" y1="220" x2="400" y2="220" stroke="oklch(0.9 0.01 270)" strokeDasharray="3 10" />
-      </svg>
-    );
-  }
-  if (kind === "graph") {
-    const nodes = [
-      [80, 80], [200, 50], [320, 90], [120, 180], [240, 200], [340, 220], [60, 220],
-    ] as [number, number][];
-    const edges = [[0,1],[1,2],[0,3],[1,4],[2,5],[3,4],[4,5],[3,6],[4,1]];
-    return (
-      <svg viewBox="0 0 400 300" className="h-full w-full">
-        {edges.map(([a, b], i) => (
-          <motion.line
-            key={i}
-            x1={nodes[a][0]} y1={nodes[a][1]} x2={nodes[b][0]} y2={nodes[b][1]}
-            stroke={accent} strokeOpacity="0.55" strokeWidth="1.2"
-            initial={{ pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-          />
-        ))}
-        {nodes.map(([x, y], i) => (
-          <motion.circle
-            key={i} cx={x} cy={y} r={i % 3 === 0 ? 9 : 5}
-            fill={accent}
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 + i * 0.07, ease: [0.16, 1, 0.3, 1] }}
-          />
-        ))}
-      </svg>
-    );
-  }
-  // can
-  return (
-    <svg viewBox="0 0 400 300" className="h-full w-full">
-      {Array.from({ length: 5 }).map((_, row) => (
-        <g key={row}>
-          {Array.from({ length: 32 }).map((_, col) => {
-            const on = (col + row * 3) % 7 < 3;
-            return (
-              <motion.rect
-                key={col}
-                x={20 + col * 11}
-                y={60 + row * 38}
-                width={8}
-                height={on ? 22 : 6}
-                rx={1.5}
-                fill={on ? accent : "oklch(0.88 0.01 270)"}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: row * 0.1 + col * 0.015 }}
-              />
-            );
-          })}
-        </g>
-      ))}
-    </svg>
-  );
-}
-
 function ProjectCard({ p, i }: { p: Project; i: number }) {
   const ref = useRef<HTMLDivElement>(null);
+
+  // Parallax + entrance
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [60, -60]);
-  const reverse = i % 2 === 1;
+  const yShift = useTransform(scrollYProgress, [0, 1], [40, -40]);
+
+  // Pointer-tracked spotlight
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.5);
+  const smx = useSpring(mx, { stiffness: 200, damping: 30, mass: 0.4 });
+  const smy = useSpring(my, { stiffness: 200, damping: 30, mass: 0.4 });
+  const bg = useTransform(
+    [smx, smy] as never,
+    ([xv, yv]: number[]) =>
+      `radial-gradient(420px circle at ${xv * 100}% ${yv * 100}%, ${p.accent}3D, transparent 55%)`,
+  );
+
+  const handleMove = (e: React.MouseEvent) => {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    mx.set((e.clientX - r.left) / r.width);
+    my.set((e.clientY - r.top) / r.height);
+  };
 
   return (
-    <motion.div
+    <motion.article
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
+      onMouseMove={handleMove}
+      initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-120px" }}
-      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-      className={`grid grid-cols-12 items-center gap-6 ${reverse ? "md:[direction:rtl]" : ""}`}
+      transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: (i % 2) * 0.08 }}
+      style={{ y: yShift }}
+      className="group relative"
     >
-      <motion.div
-        style={{ y }}
-        className={`col-span-12 md:col-span-6 ${reverse ? "md:[direction:ltr]" : ""}`}
+      <div
+        className="glass-strong relative overflow-hidden rounded-[28px] p-7 md:p-10"
+        style={{
+          boxShadow: `0 40px 90px -40px ${p.accent}, 0 2px 6px rgba(15,23,42,0.04), inset 0 1px 0 rgba(255,255,255,0.7)`,
+        }}
       >
+        {/* spotlight overlay */}
         <motion.div
-          whileHover={{ y: -6 }}
-          transition={{ type: "spring", stiffness: 200, damping: 22 }}
-          className="glass-strong relative overflow-hidden rounded-3xl p-6"
-          style={{
-            boxShadow: `0 30px 80px -30px ${p.accent}, 0 2px 6px rgba(15,23,42,0.04), inset 0 1px 0 rgba(255,255,255,0.7)`,
-          }}
-        >
-          <div
-            className="absolute inset-0 -z-10 opacity-60"
-            style={{
-              background: `radial-gradient(120% 80% at 100% 0%, ${p.accent}33, transparent 60%)`,
-            }}
-          />
-          <div className="aspect-[4/3] w-full">
-            <Visual kind={p.visual} accent={p.accent} />
-          </div>
-        </motion.div>
-      </motion.div>
+          aria-hidden
+          style={{ background: bg }}
+          className="pointer-events-none absolute inset-0 -z-0 opacity-90 transition-opacity duration-700"
+        />
+        {/* corner accent blob */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full opacity-50 blur-3xl"
+          style={{ background: p.accent }}
+        />
 
-      <div className={`col-span-12 md:col-span-5 ${reverse ? "md:[direction:ltr] md:col-start-2" : "md:col-start-8"}`}>
-        <p className="mb-4 font-mono text-xs tracking-widest text-ink-muted">
-          PROJECT — {p.index}
-        </p>
-        <h3 className="font-display text-3xl leading-tight tracking-tight text-ink md:text-4xl">
-          {p.title}
-        </h3>
-        <p className="mt-3 text-sm uppercase tracking-[0.18em] text-ink-muted">{p.tag}</p>
-        <p className="mt-6 text-[15px] leading-relaxed text-ink-muted">{p.body}</p>
-        <button className="group mt-7 inline-flex items-center gap-2 text-sm font-medium text-ink">
-          Case study
-          <ArrowUpRight
-            size={16}
-            className="transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-          />
-        </button>
+        <div className="relative z-10 grid grid-cols-12 gap-x-6 gap-y-6">
+          {/* index + status */}
+          <div className="col-span-12 flex items-center justify-between md:col-span-4">
+            <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-ink-muted">
+              Project / {p.index}
+            </p>
+            {p.status && (
+              <span className="flex items-center gap-1.5 rounded-full bg-white/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-ink">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[oklch(0.7_0.15_150)]" />
+                {p.status}
+              </span>
+            )}
+          </div>
+
+          {/* title */}
+          <div className="col-span-12 md:col-span-8">
+            <h3 className="font-display text-3xl leading-[1.02] tracking-tight text-ink md:text-5xl">
+              {p.title}
+            </h3>
+            {p.subtitle && (
+              <p className="mt-2 text-sm uppercase tracking-[0.22em] text-ink-muted md:text-[13px]">
+                {p.subtitle}
+              </p>
+            )}
+          </div>
+
+          {/* description */}
+          <div className="col-span-12 md:col-span-7 md:col-start-6">
+            <p className="text-[15px] leading-[1.75] text-ink-muted">{p.body}</p>
+          </div>
+
+          {/* tags + CTA */}
+          <div className="col-span-12 md:col-span-4 md:col-start-1 md:row-start-3">
+            <div className="flex flex-wrap gap-2">
+              {p.tags.map((t) => (
+                <span
+                  key={t}
+                  className="rounded-full border border-white/70 bg-white/55 px-3 py-1.5 text-[11px] font-medium tracking-wide text-ink backdrop-blur-md"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+            <button className="group/btn mt-8 inline-flex items-center gap-2 text-sm font-medium text-ink">
+              <span className="relative">
+                Case study
+                <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-ink transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:scale-x-100" />
+              </span>
+              <ArrowUpRight
+                size={16}
+                className="transition-transform duration-500 group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5"
+              />
+            </button>
+          </div>
+        </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
 }
 
@@ -208,11 +182,11 @@ export function Works() {
             </h2>
           </div>
           <span className="hidden font-mono text-xs uppercase tracking-widest text-ink-muted md:block">
-            03 projects
+            04 projects
           </span>
         </div>
 
-        <div className="space-y-28 md:space-y-40">
+        <div className="grid grid-cols-1 gap-8 md:gap-10 lg:grid-cols-2">
           {projects.map((p, i) => (
             <ProjectCard p={p} i={i} key={p.index} />
           ))}
