@@ -111,6 +111,63 @@
   --shadow-lift: 0 24px 60px -24px rgba(15, 23, 42, 0.18),
     0 2px 6px rgba(15, 23, 42, 0.04);
   --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-bg-strong: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-border-strong: rgba(255, 255, 255, 0.8);
+}
+
+.dark {
+  --background: oklch(0.16 0.012 270);
+  --foreground: oklch(0.94 0.008 90);
+
+  --ink: oklch(0.96 0.006 90);
+  --ink-muted: oklch(0.74 0.015 270);
+
+  --card: oklch(0.20 0.012 270);
+  --card-foreground: var(--ink);
+  --popover: oklch(0.20 0.012 270);
+  --popover-foreground: var(--ink);
+
+  --primary: oklch(0.94 0.008 90);
+  --primary-foreground: oklch(0.18 0.012 270);
+  --secondary: oklch(0.24 0.012 270);
+  --secondary-foreground: var(--ink);
+  --muted: oklch(0.24 0.012 270);
+  --muted-foreground: var(--ink-muted);
+  --accent: oklch(0.30 0.04 220);
+  --accent-foreground: var(--ink);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.7 0.08 220);
+
+  --silver: oklch(0.78 0.012 250);
+  --cyan-soft: oklch(0.72 0.10 220);
+  --amber-muted: oklch(0.78 0.10 75);
+
+  --gradient-bg:
+    radial-gradient(1200px 700px at 12% -10%, oklch(0.32 0.07 220 / 0.55), transparent 60%),
+    radial-gradient(900px 600px at 110% 10%, oklch(0.30 0.08 75 / 0.40), transparent 60%),
+    radial-gradient(900px 900px at 50% 120%, oklch(0.28 0.05 250 / 0.45), transparent 60%),
+    linear-gradient(180deg, #0a0a0c 0%, #121215 100%);
+
+  --gradient-text: linear-gradient(
+    100deg,
+    oklch(0.98 0.01 90) 0%,
+    oklch(0.82 0.10 220) 50%,
+    oklch(0.84 0.10 75) 100%
+  );
+
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-lift: 0 30px 70px -30px rgba(0, 0, 0, 0.7),
+    0 2px 6px rgba(0, 0, 0, 0.3);
+
+  --glass-bg: rgba(20, 20, 25, 0.5);
+  --glass-bg-strong: rgba(22, 22, 28, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-border-strong: rgba(255, 255, 255, 0.14);
 }
 
 @layer base {
@@ -129,6 +186,7 @@
     background-attachment: fixed;
     color: var(--color-foreground);
     letter-spacing: -0.005em;
+    transition: background-color 0.7s ease-in-out, color 0.7s ease-in-out;
   }
 
   ::selection {
@@ -145,19 +203,22 @@
 
 @layer utilities {
   .glass {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: var(--glass-bg);
     backdrop-filter: blur(24px) saturate(140%);
     -webkit-backdrop-filter: blur(24px) saturate(140%);
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-glass);
+    transition: background-color 0.7s ease-in-out, border-color 0.7s ease-in-out, box-shadow 0.7s ease-in-out;
   }
   .glass-strong {
-    background-color: rgba(255, 255, 255, 0.65);
+    background-color: var(--glass-bg-strong);
     backdrop-filter: blur(28px) saturate(160%);
     -webkit-backdrop-filter: blur(28px) saturate(160%);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--glass-border-strong);
     box-shadow: var(--shadow-glass);
+    transition: background-color 0.7s ease-in-out, border-color 0.7s ease-in-out, box-shadow 0.7s ease-in-out;
   }
+
   .text-gradient {
     background: var(--gradient-text);
     -webkit-background-clip: text;
