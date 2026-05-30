@@ -120,7 +120,7 @@ export function Hero() {
       {/* corner meta */}
       <div className="absolute bottom-8 left-6 right-6 z-10 mx-auto flex max-w-7xl items-end justify-between text-xs uppercase tracking-[0.18em] text-ink-muted md:left-12 md:right-12">
         <span>Portfolio · 2024 — 26</span>
-        <span className="hidden md:inline">Stockholm / Remote</span>
+        <span className="hidden md:inline">Based in West Java, Indonesia</span>
       </div>
     </section>
   );
