@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { useRef } from "react";
 
 const timeline = [
@@ -22,13 +22,47 @@ const timeline = [
   },
 ];
 
+function TimelineNode({ progress, index }: { progress: ReturnType<typeof useSpring>; index: number }) {
+  // Each node activates as the progress crosses its position.
+  const total = timeline.length;
+  const at = (index + 0.5) / total;
+  const lit = useTransform(progress, (v) => (v >= at ? 1 : 0));
+  const scale = useTransform(lit, [0, 1], [0.85, 1]);
+  const glow = useTransform(lit, [0, 1], [0, 1]);
+
+  return (
+    <div className="pointer-events-none absolute left-3 -translate-x-1/2 md:left-1/2">
+      <motion.div
+        style={{
+          scale,
+          boxShadow: useTransform(
+            glow,
+            [0, 1],
+            [
+              "0 0 0 0 rgba(0,0,0,0)",
+              "0 0 0 4px oklch(0.92 0.06 220 / 0.35), 0 0 22px 6px oklch(0.78 0.16 220 / 0.55)",
+            ],
+          ),
+          background: useTransform(
+            glow,
+            [0, 1],
+            ["oklch(0.92 0.01 270)", "linear-gradient(135deg, oklch(0.78 0.16 220), oklch(0.82 0.14 75))"],
+          ),
+        }}
+        className="h-3.5 w-3.5 rounded-full ring-1 ring-white/80"
+      />
+    </div>
+  );
+}
+
 export function Experience() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start 0.7", "end 0.4"],
+    offset: ["start 0.75", "end 0.35"],
   });
-  const height = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const smooth = useSpring(scrollYProgress, { stiffness: 120, damping: 28, mass: 0.4 });
+  const height = useTransform(smooth, [0, 1], ["0%", "100%"]);
 
   return (
     <section id="experience" className="relative px-6 py-32 md:px-12 md:py-48">
@@ -46,19 +80,43 @@ export function Experience() {
         <div ref={ref} className="relative grid grid-cols-12 gap-6">
           {/* Spine */}
           <div className="relative col-span-1 md:col-span-2">
-            <div className="absolute left-3 top-0 h-full w-px bg-[oklch(0.9_0.01_270)] md:left-1/2" />
+            {/* Base track — thicker, more visible */}
+            <div
+              className="absolute left-3 top-0 h-full -translate-x-1/2 rounded-full md:left-1/2"
+              style={{
+                width: "3px",
+                background:
+                  "linear-gradient(180deg, oklch(0.88 0.012 270 / 0.9), oklch(0.84 0.015 270 / 0.7))",
+              }}
+            />
+            {/* Filled progress */}
             <motion.div
               style={{ height }}
-              className="absolute left-3 top-0 w-px md:left-1/2"
+              className="absolute left-3 top-0 -translate-x-1/2 overflow-hidden rounded-full md:left-1/2"
             >
               <div
-                className="h-full w-full"
+                className="h-full w-[3px]"
                 style={{
                   background:
-                    "linear-gradient(180deg, oklch(0.86 0.08 220), oklch(0.88 0.08 75))",
+                    "linear-gradient(180deg, oklch(0.72 0.18 220), oklch(0.78 0.16 75))",
+                  boxShadow:
+                    "0 0 14px oklch(0.78 0.18 220 / 0.55), 0 0 28px oklch(0.78 0.18 220 / 0.25)",
                 }}
               />
             </motion.div>
+
+            {/* Nodes */}
+            <div className="relative h-full">
+              {timeline.map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute"
+                  style={{ top: `calc(${((i + 0.5) / timeline.length) * 100}% - 7px)` }}
+                >
+                  <TimelineNode progress={smooth} index={i} />
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="col-span-11 space-y-20 md:col-span-10">
