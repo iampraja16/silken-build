@@ -107,9 +107,9 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
           style={{ background: p.accent }}
         />
 
-        <div className="relative z-10 grid grid-cols-12 gap-x-6 gap-y-6">
+        <div className="relative z-10 flex flex-col gap-5 text-left">
           {/* index + status */}
-          <div className="col-span-12 flex items-center justify-between md:col-span-4">
+          <div className="flex items-center justify-between">
             <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-ink-muted">
               Project / {p.index}
             </p>
@@ -121,46 +121,46 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
             )}
           </div>
 
-          {/* title */}
-          <div className="col-span-12 md:col-span-8">
-            <h3 className="font-display text-3xl leading-[1.02] tracking-tight text-ink md:text-5xl">
+          {/* title + subtitle on same line on desktop */}
+          <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-baseline md:gap-x-4">
+            <h3 className="font-display text-3xl leading-[1.02] tracking-tight text-ink md:text-4xl">
               {p.title}
             </h3>
             {p.subtitle && (
-              <p className="mt-2 text-sm uppercase tracking-[0.22em] text-ink-muted md:text-[13px]">
-                {p.subtitle}
+              <p className="text-sm tracking-tight text-ink-muted md:text-[15px]">
+                — {p.subtitle}
               </p>
             )}
           </div>
 
-          {/* description */}
-          <div className="col-span-12 md:col-span-7 md:col-start-6">
-            <p className="text-[15px] leading-[1.75] text-ink-muted">{p.body}</p>
+          {/* description, left-aligned */}
+          <p className="text-left text-[15px] leading-[1.75] text-ink-muted">
+            {p.body}
+          </p>
+
+          {/* tags horizontal */}
+          <div className="flex flex-row flex-wrap gap-2 pt-2">
+            {p.tags.map((t) => (
+              <span
+                key={t}
+                className="rounded-full border border-white/10 bg-ink/85 px-3 py-1.5 text-[11px] font-medium tracking-wide text-background backdrop-blur-md"
+              >
+                {t}
+              </span>
+            ))}
           </div>
 
-          {/* tags + CTA */}
-          <div className="col-span-12 md:col-span-4 md:col-start-1 md:row-start-3">
-            <div className="flex flex-wrap gap-2">
-              {p.tags.map((t) => (
-                <span
-                  key={t}
-                  className="rounded-full border border-white/70 bg-white/55 px-3 py-1.5 text-[11px] font-medium tracking-wide text-ink backdrop-blur-md"
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-            <button className="group/btn mt-8 inline-flex items-center gap-2 text-sm font-medium text-ink">
-              <span className="relative">
-                Case study
-                <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-ink transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:scale-x-100" />
-              </span>
-              <ArrowUpRight
-                size={16}
-                className="transition-transform duration-500 group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5"
-              />
-            </button>
-          </div>
+          {/* CTA */}
+          <button className="group/btn mt-2 inline-flex items-center gap-2 self-start text-sm font-medium text-ink">
+            <span className="relative">
+              Case study
+              <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-ink transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:scale-x-100" />
+            </span>
+            <ArrowUpRight
+              size={16}
+              className="transition-transform duration-500 group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5"
+            />
+          </button>
         </div>
       </div>
     </motion.article>

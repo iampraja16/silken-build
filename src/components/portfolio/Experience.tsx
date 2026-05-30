@@ -28,24 +28,22 @@ function TimelineNode({ progress, index, total }: { progress: MotionValue<number
   useMotionValueEvent(progress, "change", (v) => setLit(v >= at));
 
   return (
-    <div className="pointer-events-none absolute left-3 -translate-x-1/2 md:left-1/2">
-      <motion.div
-        animate={{
-          scale: lit ? 1 : 0.85,
-          boxShadow: lit
-            ? "0 0 0 4px oklch(0.92 0.06 220 / 0.35), 0 0 22px 6px oklch(0.78 0.16 220 / 0.55)"
-            : "0 0 0 0 rgba(0,0,0,0)",
-        }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="h-3.5 w-3.5 rounded-full ring-1 ring-white/80"
-        style={{
-          background: lit
-            ? "linear-gradient(135deg, oklch(0.78 0.16 220), oklch(0.82 0.14 75))"
-            : "oklch(0.92 0.01 270)",
-          transition: "background 0.5s cubic-bezier(0.16,1,0.3,1)",
-        }}
-      />
-    </div>
+    <motion.div
+      animate={{
+        scale: lit ? 1 : 0.85,
+        boxShadow: lit
+          ? "0 0 0 4px oklch(0.92 0.06 220 / 0.35), 0 0 22px 6px oklch(0.78 0.16 220 / 0.55)"
+          : "0 0 0 0 rgba(0,0,0,0)",
+      }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="h-3.5 w-3.5 shrink-0 rounded-full ring-1 ring-white/80"
+      style={{
+        background: lit
+          ? "linear-gradient(135deg, oklch(0.78 0.16 220), oklch(0.82 0.14 75))"
+          : "oklch(0.92 0.01 270)",
+        transition: "background 0.5s cubic-bezier(0.16,1,0.3,1)",
+      }}
+    />
   );
 }
 
@@ -71,49 +69,33 @@ export function Experience() {
           </h2>
         </div>
 
-        <div ref={ref} className="relative grid grid-cols-12 gap-6">
-          {/* Spine */}
-          <div className="relative col-span-1 md:col-span-2">
-            {/* Base track — thicker, more visible */}
+        <div ref={ref} className="relative">
+          {/* Global spine — absolute, runs vertically through node centers */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute top-2 bottom-2 left-[5.5px] w-[3px] rounded-full"
+            style={{
+              background:
+                "linear-gradient(180deg, oklch(0.88 0.012 270 / 0.9), oklch(0.84 0.015 270 / 0.7))",
+            }}
+          />
+          <motion.div
+            aria-hidden
+            style={{ height }}
+            className="pointer-events-none absolute top-2 left-[5.5px] w-[3px] overflow-hidden rounded-full"
+          >
             <div
-              className="absolute left-3 top-0 h-full -translate-x-1/2 rounded-full md:left-1/2"
+              className="h-full w-[3px]"
               style={{
-                width: "3px",
                 background:
-                  "linear-gradient(180deg, oklch(0.88 0.012 270 / 0.9), oklch(0.84 0.015 270 / 0.7))",
+                  "linear-gradient(180deg, oklch(0.72 0.18 220), oklch(0.78 0.16 75))",
+                boxShadow:
+                  "0 0 14px oklch(0.78 0.18 220 / 0.55), 0 0 28px oklch(0.78 0.18 220 / 0.25)",
               }}
             />
-            {/* Filled progress */}
-            <motion.div
-              style={{ height }}
-              className="absolute left-3 top-0 -translate-x-1/2 overflow-hidden rounded-full md:left-1/2"
-            >
-              <div
-                className="h-full w-[3px]"
-                style={{
-                  background:
-                    "linear-gradient(180deg, oklch(0.72 0.18 220), oklch(0.78 0.16 75))",
-                  boxShadow:
-                    "0 0 14px oklch(0.78 0.18 220 / 0.55), 0 0 28px oklch(0.78 0.18 220 / 0.25)",
-                }}
-              />
-            </motion.div>
+          </motion.div>
 
-            {/* Nodes */}
-            <div className="relative h-full">
-              {timeline.map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute"
-                  style={{ top: `calc(${((i + 0.5) / timeline.length) * 100}% - 7px)` }}
-                >
-                  <TimelineNode progress={smooth} index={i} total={timeline.length} />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="col-span-11 space-y-20 md:col-span-10">
+          <div className="space-y-20">
             {timeline.map((t, i) => (
               <motion.div
                 key={i}
@@ -121,14 +103,16 @@ export function Experience() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                className="grid grid-cols-12 gap-6"
+                className="grid grid-cols-12 items-start gap-6"
               >
-                <div className="col-span-12 md:col-span-4">
+                {/* Year gutter with inline node */}
+                <div className="col-span-12 flex items-center gap-4 md:col-span-4">
+                  <TimelineNode progress={smooth} index={i} total={timeline.length} />
                   <p className="font-mono text-xs uppercase tracking-widest text-ink-muted">
                     {t.year}
                   </p>
                 </div>
-                <div className="col-span-12 md:col-span-8">
+                <div className="col-span-12 pl-[30px] md:col-span-8 md:pl-0">
                   <h3 className="font-display text-2xl tracking-tight text-ink md:text-3xl">
                     {t.role}
                   </h3>
