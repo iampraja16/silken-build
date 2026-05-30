@@ -54,7 +54,7 @@ export function Hero() {
             className="mb-8 inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs font-medium tracking-wide text-ink-muted"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-[oklch(0.7_0.15_150)]" />
-            Available for select engagements · 2026
+            Chronicling my journey in hardware and intelligence.
           </motion.div>
 
           <h1 className="font-display text-[clamp(3.5rem,11vw,11rem)] leading-[0.88] tracking-[-0.05em] text-ink">
