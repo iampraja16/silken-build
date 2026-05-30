@@ -28,24 +28,22 @@ function TimelineNode({ progress, index, total }: { progress: MotionValue<number
   useMotionValueEvent(progress, "change", (v) => setLit(v >= at));
 
   return (
-    <div className="pointer-events-none absolute left-3 -translate-x-1/2 md:left-1/2">
-      <motion.div
-        animate={{
-          scale: lit ? 1 : 0.85,
-          boxShadow: lit
-            ? "0 0 0 4px oklch(0.92 0.06 220 / 0.35), 0 0 22px 6px oklch(0.78 0.16 220 / 0.55)"
-            : "0 0 0 0 rgba(0,0,0,0)",
-        }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="h-3.5 w-3.5 rounded-full ring-1 ring-white/80"
-        style={{
-          background: lit
-            ? "linear-gradient(135deg, oklch(0.78 0.16 220), oklch(0.82 0.14 75))"
-            : "oklch(0.92 0.01 270)",
-          transition: "background 0.5s cubic-bezier(0.16,1,0.3,1)",
-        }}
-      />
-    </div>
+    <motion.div
+      animate={{
+        scale: lit ? 1 : 0.85,
+        boxShadow: lit
+          ? "0 0 0 4px oklch(0.92 0.06 220 / 0.35), 0 0 22px 6px oklch(0.78 0.16 220 / 0.55)"
+          : "0 0 0 0 rgba(0,0,0,0)",
+      }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="h-3.5 w-3.5 shrink-0 rounded-full ring-1 ring-white/80"
+      style={{
+        background: lit
+          ? "linear-gradient(135deg, oklch(0.78 0.16 220), oklch(0.82 0.14 75))"
+          : "oklch(0.92 0.01 270)",
+        transition: "background 0.5s cubic-bezier(0.16,1,0.3,1)",
+      }}
+    />
   );
 }
 
