@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
+
 
 const items = [
   { id: "home", label: "Home" },
