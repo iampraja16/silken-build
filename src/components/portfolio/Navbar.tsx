@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
+
 
 const items = [
   { id: "home", label: "Home" },
@@ -12,6 +15,8 @@ const items = [
 export function Navbar() {
   const [active, setActive] = useState<string>("home");
   const [hovered, setHovered] = useState<string | null>(null);
+  const { theme, toggle } = useTheme();
+
 
   // Sync active section with scroll using IntersectionObserver
   useEffect(() => {
@@ -107,7 +112,47 @@ export function Navbar() {
             </button>
           );
         })}
+
+
+        {/* Divider */}
+        <span
+          aria-hidden
+          className="mx-1 hidden h-5 w-px bg-[var(--glass-border-strong)] sm:block"
+        />
+
+        {/* Theme toggle */}
+        <motion.button
+          onClick={toggle}
+          onMouseEnter={() => setHovered(null)}
+          whileTap={{ scale: 0.88, rotate: -10 }}
+          transition={{ type: "spring", stiffness: 420, damping: 18, mass: 0.6 }}
+          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          className="
+            relative grid place-items-center rounded-full
+            h-7 w-7 sm:h-8 sm:w-8
+            text-ink-muted hover:text-ink
+            transition-colors
+          "
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={theme}
+              initial={{ rotate: -180, scale: 0.5, opacity: 0 }}
+              animate={{ rotate: 0, scale: 1, opacity: 1 }}
+              exit={{ rotate: 180, scale: 0.5, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 280, damping: 18, mass: 0.7 }}
+              className="absolute inset-0 grid place-items-center"
+            >
+              {theme === "dark" ? (
+                <Sun size={15} strokeWidth={1.9} />
+              ) : (
+                <Moon size={15} strokeWidth={1.9} />
+              )}
+            </motion.span>
+          </AnimatePresence>
+        </motion.button>
       </div>
     </motion.nav>
   );
 }
+
