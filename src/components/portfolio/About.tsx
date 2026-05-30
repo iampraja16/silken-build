@@ -110,10 +110,10 @@ export function About() {
               <span className="block italic text-gradient">seam of two worlds.</span>
             </h2>
 
-            <div className="mt-10 md:mt-14 md:-rotate-[1.2deg]">
+            <div className="mt-10 md:mt-14 md:-rotate-[1.2deg] max-w-[300px] md:max-w-[320px]">
               <PortraitWithCursor />
               <p className="mt-3 ml-1 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-muted">
-                Praja · Stockholm / Remote
+                Praja · Based in West Java, Indonesia
               </p>
             </div>
           </div>
