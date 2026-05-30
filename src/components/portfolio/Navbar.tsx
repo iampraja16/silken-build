@@ -112,10 +112,7 @@ export function Navbar() {
             </button>
           );
         })}
-              <span className="relative z-10">{item.label}</span>
-            </button>
-          );
-        })}
+
 
         {/* Divider */}
         <span
