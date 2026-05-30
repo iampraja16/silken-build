@@ -114,7 +114,7 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
               Project / {p.index}
             </p>
             {p.status && (
-              <span className="flex items-center gap-1.5 rounded-full bg-white/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-ink">
+              <span className="flex items-center gap-1.5 rounded-full bg-background/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-ink backdrop-blur-md">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[oklch(0.7_0.15_150)]" />
                 {p.status}
               </span>

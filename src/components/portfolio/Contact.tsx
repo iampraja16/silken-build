@@ -47,7 +47,7 @@ export function Contact() {
               <input
                 type="text"
                 required
-                className="w-full rounded-xl border border-white/70 bg-white/40 px-4 py-3 text-sm text-ink outline-none transition focus:border-white focus:bg-white/70"
+                className="w-full rounded-xl border border-white/70 bg-white/40 px-4 py-3 text-sm text-ink outline-none transition focus:border-white focus:bg-white/70 dark:border-white/10 dark:bg-white/[0.04] dark:focus:border-white/30 dark:focus:bg-white/[0.08]"
                 placeholder="Your name"
               />
             </label>
@@ -58,7 +58,7 @@ export function Contact() {
               <input
                 type="email"
                 required
-                className="w-full rounded-xl border border-white/70 bg-white/40 px-4 py-3 text-sm text-ink outline-none transition focus:border-white focus:bg-white/70"
+                className="w-full rounded-xl border border-white/70 bg-white/40 px-4 py-3 text-sm text-ink outline-none transition focus:border-white focus:bg-white/70 dark:border-white/10 dark:bg-white/[0.04] dark:focus:border-white/30 dark:focus:bg-white/[0.08]"
                 placeholder="you@studio.com"
               />
             </label>
@@ -69,10 +69,11 @@ export function Contact() {
               <textarea
                 required
                 rows={4}
-                className="w-full resize-none rounded-xl border border-white/70 bg-white/40 px-4 py-3 text-sm text-ink outline-none transition focus:border-white focus:bg-white/70"
+                className="w-full resize-none rounded-xl border border-white/70 bg-white/40 px-4 py-3 text-sm text-ink outline-none transition focus:border-white focus:bg-white/70 dark:border-white/10 dark:bg-white/[0.04] dark:focus:border-white/30 dark:focus:bg-white/[0.08]"
                 placeholder="Tell me about the project…"
               />
             </label>
+
           </div>
 
           <motion.button
@@ -109,7 +110,7 @@ export function Contact() {
           ))}
         </div>
 
-        <footer className="mt-24 flex flex-col items-center justify-between gap-4 border-t border-[oklch(0.9_0.01_270)] pt-8 text-xs uppercase tracking-[0.18em] text-ink-muted md:flex-row">
+        <footer className="mt-24 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-xs uppercase tracking-[0.18em] text-ink-muted md:flex-row">
           <span>© 2026 Praja</span>
           <span>Crafted with intent · IoT × AI</span>
         </footer>
