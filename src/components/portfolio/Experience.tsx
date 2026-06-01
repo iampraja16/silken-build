@@ -3,24 +3,38 @@ import { useRef, useState } from "react";
 
 const timeline = [
   {
-    year: "2024 — Present",
-    role: "IoT & AI Engineer",
-    org: "Heavy Equipment Distribution",
-    body: "Leading data acquisition and edge-AI initiatives across the vehicle fleet. Designing CAN bus instrumentation, deploying ML models on Jetson and ESP32 targets, and integrating telemetry pipelines with internal analytics.",
+    year: "Aug 2025 — Jul 2026",
+    role: "IoT Engineer",
+    org: "PT. United Tractors Tbk",
+    bullets: [
+      "Enhanced an existing road condition monitoring system by optimizing edge computing performance and implementing LoRa-based communication protocols, reducing data transmission overhead and improving system efficiency by up to 45% in constrained field environments.",
+      "Delivered an internal technical session on IoT innovation for 180+ employees across branch and site operations, aimed at accelerating digital adoption and fostering a culture of data-driven innovation within operational teams.",
+      "Designed and developed a CAN bus data acquisition architecture for heavy-duty vehicles (e.g., Scania), enabling structured extraction and processing of vehicle telemetry data for further analytics and monitoring use cases.",
+      "(On-going) Developing an Edge AI-based system integrating lightweight LLM capabilities for on-device deployment, aimed at enabling self-diagnostic and predictive health monitoring of heavy-duty trucks without reliance on continuous cloud connectivity.",
+    ],
   },
   {
-    year: "2023 — 2024",
-    role: "Embedded ML Engineer",
-    org: "R&D, Hardware Prototyping",
-    body: "Built end-to-end embedded ML prototypes: PCB design, firmware on ESP32 with LoRa uplink, on-device inference with Random Forest classifiers for industrial sensing applications.",
+    year: "Feb 2025 — Jul 2025",
+    role: "IoT Engineer Intern",
+    org: "PT. United Tractors Tbk",
+    bullets: [
+      "Developed a real-time road condition detection and classification system to support operational decision-making, enabling faster maintenance response and contributing to fuel efficiency optimization in heavy-duty vehicle operations.",
+      "Developed a depth-sensing-based volume estimation system for irregular material loads in dump trucks. Applied geometric modeling and point cloud processing to improve estimation accuracy under non-uniform surface conditions. Designed for real-world deployment in harsh industrial environments.",
+      "Designed a compact and thermally-aware 3D junction box enclosure to house embedded systems, improving space efficiency and heat dissipation in operational field conditions.",
+    ],
   },
   {
-    year: "2023",
-    role: "AI Research Contributor",
-    org: "Independent / Academic",
-    body: "Early work in retrieval-augmented reasoning and knowledge graph construction—foundations that later shaped the GraphRAG-based competitive intelligence engine.",
+    year: "Feb 2025 — Jul 2025",
+    role: "Machine Learning Engineer",
+    org: "Concurrent Engagement",
+    bullets: [
+      "Engineered an end-to-end machine learning pipeline utilizing Random Forest algorithms for the classification of complex time-series vibration data.",
+      "Executed rigorous data preprocessing and feature extraction across multi-domain datasets, significantly improving model robustness for sensor-based inputs.",
+      "Optimized hyper-parameters and model architecture to ensure lightweight inference, paving the way for efficient deployment within constrained edge computing hardware.",
+    ],
   },
 ];
+
 
 function TimelineNode({ progress, index, total }: { progress: MotionValue<number>; index: number; total: number }) {
   const at = (index + 0.5) / total;
@@ -119,9 +133,18 @@ export function Experience() {
                   <p className="mt-1 text-sm uppercase tracking-[0.18em] text-ink-muted">
                     {t.org}
                   </p>
-                  <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-ink-muted">
-                    {t.body}
-                  </p>
+                  <ul className="mt-4 max-w-2xl space-y-2.5 text-[15px] leading-relaxed text-ink-muted">
+                    {t.bullets.map((b, idx) => (
+                      <li key={idx} className="relative pl-5">
+                        <span
+                          aria-hidden
+                          className="absolute left-0 top-[0.65em] h-1 w-1 rounded-full bg-ink/50"
+                        />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+
                 </div>
               </motion.div>
             ))}

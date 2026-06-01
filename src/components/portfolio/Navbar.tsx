@@ -117,8 +117,9 @@ export function Navbar() {
         {/* Divider */}
         <span
           aria-hidden
-          className="mx-1 hidden h-5 w-px bg-[var(--glass-border-strong)] sm:block"
+          className="mx-1 hidden h-5 w-px bg-ink/25 transition-colors duration-700 dark:bg-white/20 sm:block"
         />
+
 
         {/* Theme toggle */}
         <motion.button
