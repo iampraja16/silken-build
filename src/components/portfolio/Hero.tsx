@@ -95,9 +95,7 @@ export function Hero() {
                 ))}
               </div>
               <p className="mt-6 max-w-md text-[15px] leading-relaxed text-ink-muted">
-                Two years building intelligent systems where physical sensing
-                meets machine learning—on the edge, at the source, where
-                decisions matter.
+                Transforming raw physical data into intelligent action. I architect edge systems that give heavy machinery and infrastructure the ability to sense, reason, and adapt in real-time.
               </p>
 
               <motion.button
