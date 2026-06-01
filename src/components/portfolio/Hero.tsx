@@ -76,7 +76,7 @@ export function Hero() {
             </motion.span>
           </h1>
 
-          <div className="mt-8 grid grid-cols-12 gap-6">
+          <div className="mt-10 flex flex-col gap-y-8 md:mt-8 md:grid md:grid-cols-12 md:gap-6">
             <div className="col-span-12 md:col-span-5 md:col-start-7">
               <div className="relative h-7 overflow-hidden">
                 {rotating.map((line, i) => (
