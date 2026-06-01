@@ -1,5 +1,5 @@
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import { useRef } from "react";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
+import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 
 type Project = {
@@ -52,122 +52,202 @@ const projects: Project[] = [
   },
 ];
 
-function ProjectCard({ p, i }: { p: Project; i: number }) {
-  const ref = useRef<HTMLDivElement>(null);
+const ease = [0.16, 1, 0.3, 1] as const;
 
-  // Parallax + entrance
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const yShift = useTransform(scrollYProgress, [0, 1], [40, -40]);
-
-  // Pointer-tracked spotlight
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const smx = useSpring(mx, { stiffness: 200, damping: 30, mass: 0.4 });
-  const smy = useSpring(my, { stiffness: 200, damping: 30, mass: 0.4 });
-  const bg = useTransform(
-    [smx, smy] as never,
-    ([xv, yv]: number[]) =>
-      `radial-gradient(420px circle at ${xv * 100}% ${yv * 100}%, ${p.accent}3D, transparent 55%)`,
-  );
-
-  const handleMove = (e: React.MouseEvent) => {
-    const r = ref.current?.getBoundingClientRect();
-    if (!r) return;
-    mx.set((e.clientX - r.left) / r.width);
-    my.set((e.clientY - r.top) / r.height);
-  };
+function ProjectRow({
+  p,
+  isOpen,
+  onToggle,
+  isAnyOpen,
+}: {
+  p: Project;
+  isOpen: boolean;
+  onToggle: () => void;
+  isAnyOpen: boolean;
+}) {
+  const [hover, setHover] = useState(false);
+  const dim = isAnyOpen && !isOpen;
 
   return (
-    <motion.article
-      ref={ref}
-      onMouseMove={handleMove}
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-120px" }}
-      transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: (i % 2) * 0.08 }}
-      style={{ y: yShift }}
-      className="group relative"
+    <motion.li
+      layout
+      transition={{ layout: { duration: 0.9, ease } }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      className="relative border-t border-ink/10 transition-colors duration-700 dark:border-white/10"
+      style={{ borderBottomWidth: p.index === "04" ? 1 : 0 }}
     >
-      <div
-        className="glass-strong relative overflow-hidden rounded-[28px] p-7 md:p-10"
-        style={{
-          boxShadow: `0 40px 90px -40px ${p.accent}, 0 2px 6px rgba(15,23,42,0.04), inset 0 1px 0 rgba(255,255,255,0.7)`,
+      {/* Liquid accent reveal */}
+      <motion.span
+        aria-hidden
+        initial={false}
+        animate={{
+          opacity: isOpen ? 1 : hover ? 0.55 : 0,
+          scaleX: isOpen || hover ? 1 : 0.2,
         }}
+        transition={{ duration: 0.9, ease }}
+        className="pointer-events-none absolute inset-x-0 top-0 h-px origin-left"
+        style={{
+          background: `linear-gradient(90deg, transparent, ${p.accent}, transparent)`,
+          filter: "blur(0.5px)",
+        }}
+      />
+
+      <motion.button
+        layout
+        onClick={onToggle}
+        animate={{ opacity: dim ? 0.42 : 1 }}
+        transition={{ duration: 0.6, ease }}
+        className="group relative grid w-full grid-cols-12 items-baseline gap-4 py-7 text-left md:py-10"
+        aria-expanded={isOpen}
       >
-        {/* spotlight overlay */}
-        <motion.div
-          aria-hidden
-          style={{ background: bg }}
-          className="pointer-events-none absolute inset-0 -z-0 opacity-90 transition-opacity duration-700"
-        />
-        {/* corner accent blob */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full opacity-50 blur-3xl"
-          style={{ background: p.accent }}
-        />
+        {/* index */}
+        <span className="col-span-2 font-mono text-[11px] uppercase tracking-[0.28em] text-ink-muted md:col-span-1">
+          {p.index}
+        </span>
 
-        <div className="relative z-10 flex flex-col gap-5 text-left">
-          {/* index + status */}
-          <div className="flex items-center justify-between">
-            <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-ink-muted">
-              Project / {p.index}
-            </p>
-            {p.status && (
-              <span className="flex items-center gap-1.5 rounded-full bg-background/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-ink backdrop-blur-md">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[oklch(0.7_0.15_150)]" />
-                {p.status}
-              </span>
-            )}
-          </div>
-
-          {/* title + subtitle on same line on desktop */}
-          <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-baseline md:gap-x-4">
-            <h3 className="font-display text-3xl leading-[1.02] tracking-tight text-ink md:text-4xl">
+        {/* title */}
+        <motion.span
+          layout="position"
+          className="col-span-10 md:col-span-8"
+        >
+          <h3 className="font-display text-3xl leading-[1.02] tracking-tight text-ink md:text-5xl lg:text-6xl">
+            <motion.span
+              className="inline-block"
+              animate={{ x: hover && !isOpen ? 14 : 0 }}
+              transition={{ duration: 0.7, ease }}
+            >
               {p.title}
-            </h3>
-            {p.subtitle && (
-              <p className="text-sm tracking-tight text-ink-muted md:text-[15px]">
-                — {p.subtitle}
-              </p>
-            )}
-          </div>
+            </motion.span>
+          </h3>
+        </motion.span>
 
-          {/* description, left-aligned */}
-          <p className="text-left text-[15px] leading-[1.75] text-ink-muted">
-            {p.body}
-          </p>
-
-          {/* tags horizontal */}
-          <div className="flex flex-row flex-wrap gap-2 pt-2">
-            {p.tags.map((t) => (
-              <span
-                key={t}
-                className="rounded-full border border-white/10 bg-ink/85 px-3 py-1.5 text-[11px] font-medium tracking-wide text-background backdrop-blur-md"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <button className="group/btn mt-2 inline-flex items-center gap-2 self-start text-sm font-medium text-ink">
-            <span className="relative">
-              Case study
-              <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-ink transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:scale-x-100" />
+        {/* right meta */}
+        <span className="col-span-12 mt-1 flex items-center justify-end gap-3 md:col-span-3 md:mt-0">
+          {p.status && (
+            <span className="hidden items-center gap-1.5 rounded-full border border-ink/10 bg-background/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-ink backdrop-blur-md md:inline-flex dark:border-white/10">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[oklch(0.7_0.15_150)]" />
+              {p.status}
             </span>
-            <ArrowUpRight
-              size={16}
-              className="transition-transform duration-500 group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5"
-            />
-          </button>
-        </div>
-      </div>
-    </motion.article>
+          )}
+          <motion.span
+            aria-hidden
+            animate={{ rotate: isOpen ? 45 : 0 }}
+            transition={{ duration: 0.6, ease }}
+            className="grid h-9 w-9 place-items-center rounded-full border border-ink/15 text-ink dark:border-white/15"
+          >
+            <span className="relative block h-3 w-3">
+              <span className="absolute left-1/2 top-1/2 h-px w-3 -translate-x-1/2 -translate-y-1/2 bg-current" />
+              <motion.span
+                animate={{ scaleX: isOpen ? 0 : 1 }}
+                transition={{ duration: 0.5, ease }}
+                className="absolute left-1/2 top-1/2 h-3 w-px -translate-x-1/2 -translate-y-1/2 bg-current"
+              />
+            </span>
+          </motion.span>
+        </span>
+      </motion.button>
+
+      {/* Expanded panel */}
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            key="panel"
+            layout
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{
+              height: { duration: 0.8, ease },
+              opacity: { duration: 0.5, ease, delay: 0.05 },
+            }}
+            className="overflow-hidden"
+          >
+            <div className="relative grid grid-cols-12 gap-6 pb-12 md:gap-10">
+              {/* liquid background wash */}
+              <motion.div
+                aria-hidden
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.1, ease }}
+                className="pointer-events-none absolute -inset-x-6 -top-6 -z-10 h-[120%] rounded-[40px] blur-3xl"
+                style={{
+                  background: `radial-gradient(60% 80% at 20% 30%, ${p.accent}55, transparent 70%), radial-gradient(50% 70% at 80% 70%, ${p.accent}33, transparent 70%)`,
+                }}
+              />
+
+              <div className="col-span-12 md:col-span-4">
+                {p.subtitle && (
+                  <motion.p
+                    initial={{ y: 14, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.7, ease, delay: 0.1 }}
+                    className="text-base tracking-tight text-ink md:text-lg"
+                  >
+                    {p.subtitle}
+                  </motion.p>
+                )}
+                <motion.div
+                  initial={{ y: 14, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.7, ease, delay: 0.18 }}
+                  className="mt-6 flex flex-wrap gap-2"
+                >
+                  {p.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="rounded-full border border-white/10 bg-ink/85 px-3 py-1.5 text-[11px] font-medium tracking-wide text-background backdrop-blur-md"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </motion.div>
+                {p.status && (
+                  <span className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-background/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-ink backdrop-blur-md md:hidden dark:border-white/10">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[oklch(0.7_0.15_150)]" />
+                    {p.status}
+                  </span>
+                )}
+              </div>
+
+              <div className="col-span-12 md:col-span-8">
+                <motion.p
+                  initial={{ y: 18, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.8, ease, delay: 0.14 }}
+                  className="max-w-3xl text-[15px] leading-[1.8] text-ink-muted md:text-base"
+                >
+                  {p.body}
+                </motion.p>
+
+                <motion.button
+                  initial={{ y: 14, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.7, ease, delay: 0.26 }}
+                  className="group/btn mt-8 inline-flex items-center gap-2 text-sm font-medium text-ink"
+                >
+                  <span className="relative">
+                    Case study
+                    <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-ink transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/btn:scale-x-100" />
+                  </span>
+                  <ArrowUpRight
+                    size={16}
+                    className="transition-transform duration-500 group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5"
+                  />
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.li>
   );
 }
 
 export function Works() {
+  const [openIndex, setOpenIndex] = useState<string | null>("01");
+
   return (
     <section id="work" className="relative px-6 py-32 md:px-12 md:py-48">
       <div className="mx-auto max-w-7xl">
@@ -186,11 +266,21 @@ export function Works() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 md:gap-10 lg:grid-cols-2">
-          {projects.map((p, i) => (
-            <ProjectCard p={p} i={i} key={p.index} />
-          ))}
-        </div>
+        <LayoutGroup>
+          <motion.ul layout className="relative">
+            {projects.map((p) => (
+              <ProjectRow
+                key={p.index}
+                p={p}
+                isOpen={openIndex === p.index}
+                isAnyOpen={openIndex !== null}
+                onToggle={() =>
+                  setOpenIndex((cur) => (cur === p.index ? null : p.index))
+                }
+              />
+            ))}
+          </motion.ul>
+        </LayoutGroup>
       </div>
     </section>
   );
