@@ -21,7 +21,7 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen items-center overflow-hidden px-6 pt-32 md:px-12"
+      className="relative flex min-h-screen items-center overflow-hidden px-6 pt-32 pb-24 md:px-12 md:pb-0"
     >
       {/* abstract mesh */}
       <motion.div
