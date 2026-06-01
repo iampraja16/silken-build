@@ -122,18 +122,10 @@ export function About() {
         <div className="col-span-12 md:col-span-6 md:col-start-7">
           <div className="space-y-7 text-lg leading-relaxed text-ink-muted">
             <p>
-              For two years I&rsquo;ve worked at the intersection of physical
-              engineering and artificial intelligence—designing sensing
-              hardware, deploying models to the edge, and turning raw signals
-              from machinery into actionable insight.
+              With two years of hands-on experience in the heavy equipment and industrial sectors, my focus lies at the intersection of embedded hardware and machine learning. I specialize in building deterministic, edge-deployed intelligence—from extracting robust telemetry via CAN bus architectures to implementing on-device LLMs and semi-supervised learning models.
             </p>
             <p>
-              Most of my recent work lives in the heavy equipment sector:
-              instrumenting vehicles, capturing CAN bus telemetry, and building
-              the reasoning systems that interpret it. I care about systems
-              that are <span className="text-ink">measurable</span>,{" "}
-              <span className="text-ink">maintainable</span>, and quietly
-              reliable in the field.
+              I don&rsquo;t just build systems that collect data; I engineer solutions that understand it, designed to operate reliably in the most constrained and demanding physical environments.
             </p>
           </div>
 

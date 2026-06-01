@@ -21,7 +21,7 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen items-center overflow-hidden px-6 pt-32 md:px-12"
+      className="relative flex min-h-screen items-center overflow-hidden px-6 pt-32 pb-24 md:px-12 md:pb-0"
     >
       {/* abstract mesh */}
       <motion.div
@@ -72,11 +72,11 @@ export function Hero() {
               transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
               className="block text-[clamp(1.75rem,4.4vw,4.5rem)] font-sans font-light not-italic text-ink-muted"
             >
-              IoT &amp; AI Engineer<span className="text-[oklch(0.7_0.1_75)]">—</span>
+              Engineering the space where physical systems meet artificial intelligence.
             </motion.span>
           </h1>
 
-          <div className="mt-8 grid grid-cols-12 gap-6">
+          <div className="mt-10 flex flex-col gap-y-8 md:mt-8 md:grid md:grid-cols-12 md:gap-6">
             <div className="col-span-12 md:col-span-5 md:col-start-7">
               <div className="relative h-7 overflow-hidden">
                 {rotating.map((line, i) => (
@@ -95,9 +95,7 @@ export function Hero() {
                 ))}
               </div>
               <p className="mt-6 max-w-md text-[15px] leading-relaxed text-ink-muted">
-                Two years building intelligent systems where physical sensing
-                meets machine learning—on the edge, at the source, where
-                decisions matter.
+                Transforming raw physical data into intelligent action. I architect edge systems that give heavy machinery and infrastructure the ability to sense, reason, and adapt in real-time.
               </p>
 
               <motion.button
@@ -119,7 +117,7 @@ export function Hero() {
 
       {/* corner meta */}
       <div className="absolute bottom-8 left-6 right-6 z-10 mx-auto flex max-w-7xl items-end justify-between text-xs uppercase tracking-[0.18em] text-ink-muted md:left-12 md:right-12">
-        <span>Portfolio · 2024 — 26</span>
+        <span>Home</span>
         <span className="hidden md:inline">Based in West Java, Indonesia</span>
       </div>
     </section>
