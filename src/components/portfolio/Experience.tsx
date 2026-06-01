@@ -133,9 +133,18 @@ export function Experience() {
                   <p className="mt-1 text-sm uppercase tracking-[0.18em] text-ink-muted">
                     {t.org}
                   </p>
-                  <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-ink-muted">
-                    {t.body}
-                  </p>
+                  <ul className="mt-4 max-w-2xl space-y-2.5 text-[15px] leading-relaxed text-ink-muted">
+                    {t.bullets.map((b, idx) => (
+                      <li key={idx} className="relative pl-5">
+                        <span
+                          aria-hidden
+                          className="absolute left-0 top-[0.65em] h-1 w-1 rounded-full bg-ink/50"
+                        />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+
                 </div>
               </motion.div>
             ))}
