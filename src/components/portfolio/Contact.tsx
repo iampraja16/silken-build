@@ -93,9 +93,9 @@ export function Contact() {
 
         <div className="mt-14 flex items-center justify-center gap-3">
           {[
-            { Icon: Linkedin, label: "LinkedIn", href: "#" },
-            { Icon: Github, label: "GitHub", href: "#" },
-            { Icon: Mail, label: "Email", href: "mailto:hello@praja.dev" },
+            { Icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/muhamad-praja-dewanata" },
+            { Icon: Github, label: "GitHub", href: "https://github.com/iampraja16" },
+            { Icon: Mail, label: "Email", href: "mailto:prajadewanata@gmail.com" },
           ].map(({ Icon, label, href }) => (
             <motion.a
               key={label}
@@ -111,8 +111,8 @@ export function Contact() {
         </div>
 
         <footer className="mt-24 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-xs uppercase tracking-[0.18em] text-ink-muted md:flex-row">
-          <span>© 2026 Praja</span>
-          <span>Crafted with intent · IoT × AI</span>
+          <span>© 2026 Muhamad Praja Dewanata</span>
+          <span>Crafted with love · IoT & AI Engineer</span>
         </footer>
       </div>
     </section>

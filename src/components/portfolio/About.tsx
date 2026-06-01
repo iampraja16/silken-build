@@ -1,6 +1,6 @@
 import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
-import portrait from "@/assets/portrait.jpg";
+import portrait from "@/assets/praja's_picture.jpeg";
 
 const stack = {
   AI: [

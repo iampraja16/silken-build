@@ -72,7 +72,7 @@ export function Hero() {
               transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.18 }}
               className="block text-[clamp(1.75rem,4.4vw,4.5rem)] font-sans font-light not-italic text-ink-muted"
             >
-              Engineering the space where physical systems meet artificial intelligence.
+              IoT &amp; AI Engineer<span className="text-[oklch(0.7_0.1_75)]">—</span>
             </motion.span>
           </h1>
 

@@ -26,7 +26,7 @@ const timeline = [
   {
     year: "Feb 2025 — Jul 2025",
     role: "Machine Learning Engineer",
-    org: "Concurrent Engagement",
+    org: "PT. United Tractors Tbk",
     bullets: [
       "Engineered an end-to-end machine learning pipeline utilizing Random Forest algorithms for the classification of complex time-series vibration data.",
       "Executed rigorous data preprocessing and feature extraction across multi-domain datasets, significantly improving model robustness for sensor-based inputs.",
