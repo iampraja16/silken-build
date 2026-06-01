@@ -152,8 +152,7 @@ function ProjectRow({
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
-            key="panel"
-            layout
+            key={`panel-${p.index}`}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -246,7 +245,7 @@ function ProjectRow({
 }
 
 export function Works() {
-  const [openIndex, setOpenIndex] = useState<string | null>("01");
+  const [openIndex, setOpenIndex] = useState<string | null>(null);
 
   return (
     <section id="work" className="relative px-6 py-32 md:px-12 md:py-48">
