@@ -1,4 +1,4 @@
-const ROW_ONE = [
+export const ROW_ONE = [
   "C",
   "C++",
   "Python",
@@ -12,7 +12,7 @@ const ROW_ONE = [
   "NVIDIA CUDA",
 ];
 
-const ROW_TWO = [
+export const ROW_TWO = [
   "NVIDIA DeepStream",
   "LangChain",
   "LangGraph",
@@ -26,39 +26,48 @@ const ROW_TWO = [
   "Anaconda",
 ];
 
-function Row({ items, reverse }: { items: string[]; reverse?: boolean }) {
+export function MarqueeRow({
+  items,
+  reverse,
+  variant = "back",
+}: {
+  items: string[];
+  reverse?: boolean;
+  variant?: "back" | "front";
+}) {
   const loop = [...items, ...items];
+  const band =
+    variant === "front"
+      ? "border-y border-border bg-background/55 backdrop-blur-md"
+      : "border-y border-border/60 bg-secondary/30";
+  const text =
+    variant === "front"
+      ? "text-ink-muted opacity-70 hover:text-ink hover:opacity-100"
+      : "text-ink-muted opacity-45 hover:opacity-90";
+
+  const track = (keyPrefix: string, hidden = false) => (
+    <div
+      key={keyPrefix}
+      aria-hidden={hidden}
+      className={`marquee-track flex shrink-0 items-center gap-10 py-3 pr-10 ${
+        reverse ? "marquee-track-reverse" : ""
+      }`}
+    >
+      {loop.map((name, i) => (
+        <span
+          key={`${keyPrefix}-${name}-${i}`}
+          className={`select-none whitespace-nowrap font-mono text-xs uppercase tracking-[0.22em] transition-opacity duration-300 md:text-sm ${text}`}
+        >
+          {name}
+        </span>
+      ))}
+    </div>
+  );
+
   return (
-    <div className="marquee group flex w-full overflow-hidden">
-      <div
-        className={`marquee-track flex shrink-0 items-center gap-10 pr-10 ${
-          reverse ? "marquee-track-reverse" : ""
-        }`}
-      >
-        {loop.map((name, i) => (
-          <span
-            key={`${name}-${i}`}
-            className="select-none whitespace-nowrap font-mono text-sm uppercase tracking-[0.18em] text-ink-muted opacity-60 transition-opacity duration-300 hover:text-ink hover:opacity-100"
-          >
-            {name}
-          </span>
-        ))}
-      </div>
-      <div
-        aria-hidden
-        className={`marquee-track flex shrink-0 items-center gap-10 pr-10 ${
-          reverse ? "marquee-track-reverse" : ""
-        }`}
-      >
-        {loop.map((name, i) => (
-          <span
-            key={`dup-${name}-${i}`}
-            className="select-none whitespace-nowrap font-mono text-sm uppercase tracking-[0.18em] text-ink-muted opacity-60 transition-opacity duration-300 hover:text-ink hover:opacity-100"
-          >
-            {name}
-          </span>
-        ))}
-      </div>
+    <div className={`marquee group relative flex w-full overflow-hidden ${band}`}>
+      {track("a")}
+      {track("b", true)}
     </div>
   );
 }
@@ -74,8 +83,8 @@ export function LogoMarquee() {
         aria-hidden
         className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-background to-transparent"
       />
-      <Row items={ROW_ONE} />
-      <Row items={ROW_TWO} reverse />
+      <MarqueeRow items={ROW_ONE} />
+      <MarqueeRow items={ROW_TWO} reverse />
     </div>
   );
 }
