@@ -38,8 +38,8 @@ export function MarqueeRow({
   const loop = [...items, ...items];
   const band =
     variant === "front"
-      ? "border-y border-border bg-background/55 backdrop-blur-md"
-      : "border-y border-border/60 bg-secondary/30";
+      ? "bg-background/45 backdrop-blur-md"
+      : "border-y border-border/60 bg-secondary/45";
   const text =
     variant === "front"
       ? "text-ink-muted opacity-70 hover:text-ink hover:opacity-100"
@@ -49,7 +49,7 @@ export function MarqueeRow({
     <div
       key={keyPrefix}
       aria-hidden={hidden}
-      className={`marquee-track flex shrink-0 items-center gap-10 py-3 pr-10 ${
+      className={`marquee-track flex shrink-0 items-center gap-10 py-3.5 pr-10 ${
         reverse ? "marquee-track-reverse" : ""
       }`}
     >
