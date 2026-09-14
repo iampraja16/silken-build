@@ -1,5 +1,5 @@
-import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
-import { useState, type ReactNode } from "react";
+import { AnimatePresence, LayoutGroup, MotionConfig, motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowUpRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -116,13 +116,27 @@ function ProjectCard({ project, onOpen }: { project: Project; onOpen: () => void
 
 export function Works() {
   const [selected, setSelected] = useState<Project | null>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!selected) return;
+    closeButton.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelected(null);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [selected]);
+
   return (
+    <MotionConfig reducedMotion="user">
     <section id="work" className="relative px-6 py-28 md:px-12 md:py-40">
       <div className="mx-auto max-w-7xl">
         <div className="mb-12 flex items-end justify-between border-b border-border pb-5"><div><p className="mb-5 text-xs uppercase tracking-[0.22em] text-ink-muted">(02) — Selected works</p><h2 className="font-display text-5xl leading-[.95] text-ink md:text-7xl">Engineering, <span className="italic text-gradient">made visible.</span></h2></div><span className="hidden font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted md:block">04 field systems</span></div>
         <LayoutGroup><motion.div layout className="grid grid-cols-1 gap-3 md:grid-cols-12 md:auto-rows-[minmax(235px,auto)]">{projects.map(project=><ProjectCard key={project.index} project={project} onOpen={()=>setSelected(project)}/>)}</motion.div>
-        <AnimatePresence>{selected&&<motion.div className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur-xl" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={()=>setSelected(null)}><motion.article layoutId={`card-${selected.index}`} role="dialog" aria-modal="true" aria-labelledby="project-title" onClick={e=>e.stopPropagation()} className="max-h-[88vh] w-full max-w-4xl overflow-auto rounded-lg border border-border bg-card shadow-[var(--shadow-lift)]"><div className="flex items-start justify-between gap-5 p-6 md:p-8"><div><p className="font-mono text-[9px] uppercase tracking-[.2em] text-ink-muted">Project / {selected.index}</p><h3 id="project-title" className="mt-3 font-display text-4xl text-ink md:text-6xl">{selected.title}</h3><p className="mt-2 text-sm text-ink-muted">{selected.subtitle}</p></div><Button variant="outline" size="icon" onClick={()=>setSelected(null)} aria-label="Close project details"><X /></Button></div><ProjectVisual type={selected.visual}/><div className="grid gap-8 p-6 md:grid-cols-[1fr_auto] md:p-8"><p className="text-base leading-8 text-ink-muted">{selected.body}</p><div className="flex max-w-xs flex-wrap content-start gap-2">{selected.tags.map(tag=><span key={tag} className="rounded border border-border px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-[.12em] text-ink-muted">{tag}</span>)}</div></div></motion.article></motion.div>}</AnimatePresence></LayoutGroup>
+        <AnimatePresence>{selected&&<motion.div className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur-xl" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={()=>setSelected(null)}><motion.article layoutId={`card-${selected.index}`} role="dialog" aria-modal="true" aria-labelledby="project-title" onClick={e=>e.stopPropagation()} className="max-h-[88vh] w-full max-w-4xl overflow-auto rounded-lg border border-border bg-card shadow-[var(--shadow-lift)]"><div className="flex items-start justify-between gap-5 p-6 md:p-8"><div><p className="font-mono text-[9px] uppercase tracking-[.2em] text-ink-muted">Project / {selected.index}</p><h3 id="project-title" className="mt-3 font-display text-4xl text-ink md:text-6xl">{selected.title}</h3><p className="mt-2 text-sm text-ink-muted">{selected.subtitle}</p></div><Button ref={closeButton} variant="outline" size="icon" onClick={()=>setSelected(null)} aria-label="Close project details"><X /></Button></div><ProjectVisual type={selected.visual}/><div className="grid gap-8 p-6 md:grid-cols-[1fr_auto] md:p-8"><p className="text-base leading-8 text-ink-muted">{selected.body}</p><div className="flex max-w-xs flex-wrap content-start gap-2">{selected.tags.map(tag=><span key={tag} className="rounded border border-border px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-[.12em] text-ink-muted">{tag}</span>)}</div></div></motion.article></motion.div>}</AnimatePresence></LayoutGroup>
       </div>
     </section>
+    </MotionConfig>
   );
 }

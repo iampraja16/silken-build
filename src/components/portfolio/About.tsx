@@ -3,7 +3,7 @@ import {
   useScroll,
   useSpring,
   useTransform,
-  useReducedMotion,
+  MotionConfig,
 } from "framer-motion";
 import { useRef } from "react";
 import portrait from "@/assets/praja-cutout.png";
@@ -13,8 +13,6 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 function ScrollExpandPortrait() {
   const wrap = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
-
   const { scrollYProgress } = useScroll({
     target: wrap,
     offset: ["start end", "center center"],
@@ -32,16 +30,16 @@ function ScrollExpandPortrait() {
         <MarqueeRow items={ROW_ONE} variant="back" />
       </div>
       <motion.div
-        style={{ clipPath: reduceMotion ? "inset(0% 0% 0% 0%)" : clip }}
+        style={{ clipPath: clip }}
         className="absolute inset-0 z-10 overflow-hidden"
       >
-        <motion.div aria-hidden style={{ y: reduceMotion ? 0 : gridY }} className="technical-grid absolute inset-0 opacity-70" />
+        <motion.div aria-hidden style={{ y: gridY }} className="technical-grid absolute inset-0 opacity-70" />
 
         <motion.img
           src={portrait}
           alt="Portrait of Praja, IoT & AI Engineer"
           loading="lazy"
-          style={{ scale: reduceMotion ? 1 : imgScale, y: reduceMotion ? 0 : imgY }}
+          style={{ scale: imgScale, y: imgY }}
           className="relative z-10 h-full w-full object-contain object-bottom grayscale transition-[filter] duration-700 hover:grayscale-0"
         />
       </motion.div>
@@ -57,6 +55,7 @@ function ScrollExpandPortrait() {
 
 export function About() {
   return (
+    <MotionConfig reducedMotion="user">
     <section id="about" className="relative px-6 py-28 md:px-12 md:py-40">
       <div className="mx-auto max-w-7xl">
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: EASE }} className="mb-6 text-xs uppercase tracking-[0.22em] text-ink-muted">
@@ -95,5 +94,6 @@ export function About() {
         </div>
       </div>
     </section>
+    </MotionConfig>
   );
 }
