@@ -220,6 +220,13 @@
     .marquee-track { animation: none; }
   }
 
+  .technical-grid {
+    background-image:
+      linear-gradient(to right, var(--border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
   .glass {
     background-color: var(--glass-bg);
     backdrop-filter: blur(24px) saturate(140%);
