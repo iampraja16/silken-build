@@ -21,6 +21,8 @@ export const Route = createFileRoute("/")({
         content:
           "Bridging hardware and intelligence. Edge AI, embedded systems, and industrial reasoning.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Index,
