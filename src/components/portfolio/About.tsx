@@ -1,4 +1,5 @@
 import {
+  animate,
   motion,
   useMotionValue,
   useScroll,
@@ -6,13 +7,194 @@ import {
   useTransform,
   MotionConfig,
 } from "framer-motion";
-import { useRef, useState, type PointerEvent } from "react";
+import { useRef, useState, useEffect, type PointerEvent } from "react";
 import portrait from "@/assets/praja-cutout.png";
 import unitedTractorsLogo from "@/assets/logo-united-tractors.png";
-import jasaMargaLogo from "@/assets/logo-jasa-marga.webp";
+import jasaMargaLogo from "@/assets/logo-jasa-marga-clean.png";
 import { MarqueeRow, ROW_ONE, ROW_TWO } from "./LogoMarquee";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+interface PhysicsBadgeProps {
+  name: string;
+  image: string;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  type: "squircle" | "pill";
+  initialAlign: "left" | "right";
+  initialRotate: number;
+}
+
+function PhysicsCompanyBadge({
+  name,
+  image,
+  containerRef,
+  type,
+  initialAlign,
+  initialRotate,
+}: PhysicsBadgeProps) {
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotate = useMotionValue(0);
+  const [zIndex, setZIndex] = useState(30);
+  const isDragging = useRef(false);
+  const isInitialized = useRef(false);
+
+  useEffect(() => {
+    if (!containerRef.current || !badgeRef.current) return;
+    const container = containerRef.current;
+    const badge = badgeRef.current;
+
+    const setupPos = () => {
+      const cRect = container.getBoundingClientRect();
+      const bRect = badge.getBoundingClientRect();
+      const bWidth = bRect.width || (type === "squircle" ? 64 : 130);
+      const bHeight = bRect.height || (type === "squircle" ? 64 : 40);
+      const footerHeight = 46;
+      const floorPadding = 10;
+
+      const floorY = Math.max(10, cRect.height - footerHeight - bHeight - floorPadding);
+      const startX =
+        initialAlign === "left"
+          ? 16
+          : Math.max(16, cRect.width - bWidth - 16);
+
+      x.set(startX);
+      y.set(floorY);
+      rotate.set(initialRotate);
+      isInitialized.current = true;
+    };
+
+    if (!isInitialized.current) {
+      setupPos();
+    }
+
+    const ro = new ResizeObserver(() => {
+      if (!isDragging.current && containerRef.current && badgeRef.current && isInitialized.current) {
+        const cRect = containerRef.current.getBoundingClientRect();
+        const bRect = badgeRef.current.getBoundingClientRect();
+        const footerHeight = 46;
+        const floorPadding = 10;
+        const bHeight = bRect.height || (type === "squircle" ? 64 : 40);
+        const bWidth = bRect.width || (type === "squircle" ? 64 : 130);
+
+        const maxX = Math.max(12, cRect.width - bWidth - 12);
+        if (x.get() > maxX) x.set(maxX);
+
+        const floorY = Math.max(10, cRect.height - footerHeight - bHeight - floorPadding);
+        if (y.get() > floorY) y.set(floorY);
+      }
+    });
+
+    ro.observe(container);
+    return () => ro.disconnect();
+  }, [containerRef, initialAlign, initialRotate, type, x, y, rotate]);
+
+  const handleDragStart = () => {
+    isDragging.current = true;
+    setZIndex(45);
+  };
+
+  const handleDrag = (_: unknown, info: { velocity: { x: number; y: number } }) => {
+    // Subtle physical inertia tilt while dragging
+    const tilt = Math.max(-14, Math.min(14, info.velocity.x * 0.03));
+    rotate.set(tilt);
+  };
+
+  const handleDragEnd = (_: unknown, info: { velocity: { x: number; y: number } }) => {
+    isDragging.current = false;
+    setZIndex(30);
+
+    if (!containerRef.current || !badgeRef.current) return;
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const badgeRect = badgeRef.current.getBoundingClientRect();
+
+    const currentX = x.get();
+    const footerHeight = 46;
+    const floorPadding = 10;
+    const badgeHeight = badgeRect.height || (type === "squircle" ? 64 : 40);
+    const badgeWidth = badgeRect.width || (type === "squircle" ? 64 : 130);
+
+    // Default floor target above footer bar
+    const floorY = Math.max(10, containerRect.height - footerHeight - badgeHeight - floorPadding);
+
+    // Calculate landing X based on throw velocity with boundary clamping
+    const paddingX = 14;
+    const maxX = Math.max(paddingX, containerRect.width - badgeWidth - paddingX);
+    const targetX = Math.max(paddingX, Math.min(maxX, currentX + info.velocity.x * 0.18));
+
+    // Natural resting angle with slight randomized impact variation
+    const landingRotate = Math.max(
+      -10,
+      Math.min(10, info.velocity.x * 0.02 + (Math.random() * 8 - 4))
+    );
+
+    // Slower, smooth gravity spring fall so the drop animation is clearly visible
+    animate(y, floorY, {
+      type: "spring",
+      stiffness: 75,
+      damping: 15,
+      mass: 1.35,
+      velocity: Math.max(0, info.velocity.y * 0.4),
+    });
+
+    // Horizontal slide with inertia friction
+    animate(x, targetX, {
+      type: "spring",
+      stiffness: 70,
+      damping: 18,
+      velocity: info.velocity.x * 0.6,
+    });
+
+    // Rotation settling animation
+    animate(rotate, landingRotate, {
+      type: "spring",
+      stiffness: 75,
+      damping: 15,
+    });
+  };
+
+  return (
+    <motion.div
+      ref={badgeRef}
+      drag
+      dragConstraints={containerRef}
+      dragElastic={0.12}
+      dragMomentum={false}
+      style={{ x, y, rotate, zIndex }}
+      whileDrag={{ scale: 1.08 }}
+      whileHover={{ scale: 1.05 }}
+      onDragStart={handleDragStart}
+      onDrag={handleDrag}
+      onDragEnd={handleDragEnd}
+      tabIndex={0}
+      role="img"
+      aria-label={`${name} — professional experience (draggable)`}
+      title={`Drag ${name} to feel gravity`}
+      className={`absolute left-0 top-0 cursor-grab active:cursor-grabbing touch-none select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${
+        type === "squircle"
+          ? "h-14 w-14 md:h-16 md:w-16 rounded-2xl shadow-xl overflow-hidden filter drop-shadow-md"
+          : "flex h-10 md:h-11 items-center justify-center rounded-xl bg-white px-3.5 py-2 shadow-xl border border-black/10 filter drop-shadow-md"
+      }`}
+    >
+      {type === "squircle" ? (
+        <img
+          src={image}
+          alt={`${name} logo`}
+          draggable={false}
+          className="h-full w-full object-cover pointer-events-none rounded-2xl"
+        />
+      ) : (
+        <img
+          src={image}
+          alt={`${name} logo`}
+          draggable={false}
+          className="h-5 md:h-6 w-auto object-contain pointer-events-none"
+        />
+      )}
+    </motion.div>
+  );
+}
 
 function ScrollExpandPortrait() {
   const wrap = useRef<HTMLDivElement>(null);
@@ -35,11 +217,6 @@ function ScrollExpandPortrait() {
     cursorX.set(event.clientX - bounds.left + 14);
     cursorY.set(event.clientY - bounds.top + 14);
   };
-
-  const companyLogos = [
-    { name: "United Tractors", image: unitedTractorsLogo, className: "left-4 top-20 h-16 w-16 md:left-5 md:top-24 md:h-20 md:w-20" },
-    { name: "Jasa Marga", image: jasaMargaLogo, className: "bottom-16 right-4 h-14 w-28 md:bottom-16 md:right-5 md:h-16 md:w-32" },
-  ];
 
   return (
     <div
@@ -64,24 +241,24 @@ function ScrollExpandPortrait() {
         />
       </motion.div>
 
-      {companyLogos.map((company) => (
-        <motion.div
-          key={company.name}
-          drag
-          dragConstraints={wrap}
-          dragElastic={0.12}
-          dragMomentum={false}
-          whileDrag={{ scale: 1.06, zIndex: 35 }}
-          whileHover={{ scale: 1.04 }}
-          tabIndex={0}
-          role="img"
-          aria-label={`${company.name} — professional experience`}
-          title={`Drag ${company.name}`}
-          className={`absolute z-30 grid touch-none select-none place-items-center rounded-lg border border-border bg-background/85 p-2 shadow-[var(--shadow-glass)] backdrop-blur-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${company.className}`}
-        >
-          <img src={company.image} alt={`${company.name} logo`} draggable={false} className="max-h-full max-w-full object-contain" />
-        </motion.div>
-      ))}
+      {/* Physics & Gravity Draggable Company Logos */}
+      <PhysicsCompanyBadge
+        name="United Tractors"
+        image={unitedTractorsLogo}
+        containerRef={wrap}
+        type="squircle"
+        initialAlign="left"
+        initialRotate={-4}
+      />
+
+      <PhysicsCompanyBadge
+        name="Jasa Marga"
+        image={jasaMargaLogo}
+        containerRef={wrap}
+        type="pill"
+        initialAlign="right"
+        initialRotate={3}
+      />
 
       <motion.div
         aria-hidden

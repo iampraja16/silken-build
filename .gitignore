@@ -34,3 +34,11 @@ dist-ssr
 # Vercel
 .vercel
 
+# Environment variables
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
