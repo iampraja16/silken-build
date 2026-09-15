@@ -13,7 +13,6 @@ type Project = {
   body: string;
   tags: string[];
   status?: string;
-  size: string;
   visual: "signal" | "depth" | "can" | "graph";
   metric: string;
 };
@@ -26,7 +25,6 @@ const projects: Project[] = [
     summary: "Edge classification for heavy-duty roads using deterministic processing and long-range telemetry.",
     body: "An IoT road monitoring system designed for constrained field environments. Raspberry Pi edge processing, RTOS principles, LoRa communication, signal processing, and semi-supervised learning enable adaptable road-condition classification with limited labeled data.",
     tags: ["LoRa", "Raspberry Pi", "FreeRTOS", "Machine Learning"],
-    size: "md:col-span-7 md:row-span-2",
     visual: "signal",
     metric: "EDGE / LORA / TERRAIN",
   },
@@ -37,7 +35,6 @@ const projects: Project[] = [
     summary: "On-device depth analysis for material loads with non-uniform surfaces.",
     body: "A depth-camera system that captures 3D surface data and performs geometric modeling and spatial analysis on-device, minimizing latency while improving volume estimation for irregular dump-truck loads.",
     tags: ["Edge Computing", "Depth Sensing", "Geometry"],
-    size: "md:col-span-5",
     visual: "depth",
     metric: "DEPTH / POINT CLOUD",
   },
@@ -48,7 +45,6 @@ const projects: Project[] = [
     summary: "A robust acquisition architecture for structured external ECU telemetry.",
     body: "A CAN bus data acquisition architecture built by analyzing vehicle protocols and ECU interfaces, then directly interfacing CANH and CANL lines to produce structured telemetry for diagnostics and monitoring.",
     tags: ["CAN Bus", "Arduino", "ESP32"],
-    size: "md:col-span-5",
     visual: "can",
     metric: "CANH / CANL / ECU",
   },
@@ -60,7 +56,6 @@ const projects: Project[] = [
     body: "An ongoing edge-deployed diagnostic system integrating a lightweight LLM, quantization, model optimization, and a GraphRAG pipeline for context-aware fault detection without continuous cloud connectivity.",
     tags: ["LLM", "LangGraph", "GraphRAG", "NVIDIA Jetson"],
     status: "On research",
-    size: "md:col-span-12",
     visual: "graph",
     metric: "DEVICE / RETRIEVAL / DIAGNOSIS",
   },
@@ -96,13 +91,13 @@ function GraphVisual() {
 
 function ProjectVisual({ type }: { type: Project["visual"] }) {
   const visuals: Record<Project["visual"], ReactNode> = { signal: <SignalVisual />, depth: <DepthVisual />, can: <CanVisual />, graph: <GraphVisual /> };
-  return <div className="technical-grid relative h-48 overflow-hidden border-y border-border bg-secondary/45 md:h-full md:min-h-[210px]">{visuals[type]}</div>;
+  return <div className="technical-grid relative h-48 shrink-0 overflow-hidden border-y border-border bg-secondary/45 md:h-52">{visuals[type]}</div>;
 }
 
 function ProjectCard({ project, onOpen }: { project: Project; onOpen: () => void }) {
   const reduceMotion = useReducedMotion();
   return (
-    <motion.article layoutId={`card-${project.index}`} whileHover={reduceMotion ? undefined : { y: -4, rotateX: 0.6, rotateY: -0.6 }} transition={{ duration: .45, ease: EASE }} className={`${project.size} group relative flex min-h-[350px] flex-col overflow-hidden rounded-lg border border-border bg-card/65 [transform-style:preserve-3d] focus-within:ring-1 focus-within:ring-ring`}>
+    <motion.article layoutId={`card-${project.index}`} whileHover={reduceMotion ? undefined : { y: -4, rotateX: 0.6, rotateY: -0.6 }} transition={{ duration: .45, ease: EASE }} className="group relative flex min-h-[470px] flex-col overflow-hidden rounded-lg border border-border bg-card/65 [transform-style:preserve-3d] focus-within:ring-1 focus-within:ring-ring md:col-span-6">
       <Button variant="ghost" onClick={onOpen} className="absolute inset-0 z-20 h-auto w-full rounded-lg p-0 opacity-0" aria-label={`Open ${project.title} project details`} />
       <div className="flex items-start justify-between gap-4 p-5 md:p-6">
         <div><p className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink-muted">{project.index} / {project.metric}</p><h3 className="mt-3 font-display text-2xl leading-tight text-ink md:text-3xl">{project.title}</h3><p className="mt-1 text-xs text-ink-muted">{project.subtitle}</p></div>
@@ -133,7 +128,7 @@ export function Works() {
     <section id="work" className="relative px-6 py-28 md:px-12 md:py-40">
       <div className="mx-auto max-w-7xl">
         <div className="mb-12 flex items-end justify-between border-b border-border pb-5"><div><p className="mb-5 text-xs uppercase tracking-[0.22em] text-ink-muted">(02) — Selected works</p><h2 className="font-display text-5xl leading-[.95] text-ink md:text-7xl">Engineering, <span className="italic text-gradient">made visible.</span></h2></div><span className="hidden font-mono text-[10px] uppercase tracking-[0.2em] text-ink-muted md:block">04 field systems</span></div>
-        <LayoutGroup><motion.div layout className="grid grid-cols-1 gap-3 md:grid-cols-12 md:auto-rows-[minmax(235px,auto)]">{projects.map(project=><ProjectCard key={project.index} project={project} onOpen={()=>setSelected(project)}/>)}</motion.div>
+        <LayoutGroup><motion.div layout className="grid grid-cols-1 items-stretch gap-3 md:grid-cols-12">{projects.map(project=><ProjectCard key={project.index} project={project} onOpen={()=>setSelected(project)}/>)}</motion.div>
         <AnimatePresence>{selected&&<motion.div className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur-xl" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={()=>setSelected(null)}><motion.article layoutId={`card-${selected.index}`} role="dialog" aria-modal="true" aria-labelledby="project-title" onClick={e=>e.stopPropagation()} className="max-h-[88vh] w-full max-w-4xl overflow-auto rounded-lg border border-border bg-card shadow-[var(--shadow-lift)]"><div className="flex items-start justify-between gap-5 p-6 md:p-8"><div><p className="font-mono text-[9px] uppercase tracking-[.2em] text-ink-muted">Project / {selected.index}</p><h3 id="project-title" className="mt-3 font-display text-4xl text-ink md:text-6xl">{selected.title}</h3><p className="mt-2 text-sm text-ink-muted">{selected.subtitle}</p></div><Button ref={closeButton} variant="outline" size="icon" onClick={()=>setSelected(null)} aria-label="Close project details"><X /></Button></div><ProjectVisual type={selected.visual}/><div className="grid gap-8 p-6 md:grid-cols-[1fr_auto] md:p-8"><p className="text-base leading-8 text-ink-muted">{selected.body}</p><div className="flex max-w-xs flex-wrap content-start gap-2">{selected.tags.map(tag=><span key={tag} className="rounded border border-border px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-[.12em] text-ink-muted">{tag}</span>)}</div></div></motion.article></motion.div>}</AnimatePresence></LayoutGroup>
       </div>
     </section>
