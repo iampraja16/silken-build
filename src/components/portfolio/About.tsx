@@ -1,18 +1,24 @@
 import {
   motion,
+  useMotionValue,
   useScroll,
   useSpring,
   useTransform,
   MotionConfig,
 } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, type PointerEvent } from "react";
 import portrait from "@/assets/praja-cutout.png";
+import unitedTractorsLogo from "@/assets/logo-united-tractors.png";
+import jasaMargaLogo from "@/assets/logo-jasa-marga.webp";
 import { MarqueeRow, ROW_ONE, ROW_TWO } from "./LogoMarquee";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 function ScrollExpandPortrait() {
   const wrap = useRef<HTMLDivElement>(null);
+  const [isHovering, setIsHovering] = useState(false);
+  const cursorX = useMotionValue(0);
+  const cursorY = useMotionValue(0);
   const { scrollYProgress } = useScroll({
     target: wrap,
     offset: ["start end", "center center"],
@@ -24,11 +30,25 @@ function ScrollExpandPortrait() {
   const imgY = useTransform(smooth, [0, 1], [18, 0]);
   const gridY = useTransform(smooth, [0, 1], [26, 0]);
 
+  const updateCursor = (event: PointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    cursorX.set(event.clientX - bounds.left + 14);
+    cursorY.set(event.clientY - bounds.top + 14);
+  };
+
+  const companyLogos = [
+    { name: "United Tractors", image: unitedTractorsLogo, className: "left-4 top-20 h-16 w-16 md:left-5 md:top-24 md:h-20 md:w-20" },
+    { name: "Jasa Marga", image: jasaMargaLogo, className: "bottom-16 right-4 h-14 w-28 md:bottom-16 md:right-5 md:h-16 md:w-32" },
+  ];
+
   return (
-    <div ref={wrap} className="relative h-full min-h-[360px] overflow-hidden bg-secondary">
-      <div className="pointer-events-none absolute inset-x-[-35%] top-[31%] z-0 -rotate-2 opacity-50">
-        <MarqueeRow items={ROW_ONE} variant="back" />
-      </div>
+    <div
+      ref={wrap}
+      className="relative h-full min-h-[360px] overflow-hidden bg-secondary md:cursor-none"
+      onPointerMove={updateCursor}
+      onPointerEnter={() => setIsHovering(true)}
+      onPointerLeave={() => setIsHovering(false)}
+    >
       <motion.div
         style={{ clipPath: clip }}
         className="absolute inset-0 z-10 overflow-hidden"
@@ -42,6 +62,35 @@ function ScrollExpandPortrait() {
           style={{ scale: imgScale, y: imgY }}
           className="relative z-10 h-full w-full object-contain object-bottom grayscale transition-[filter] duration-700 hover:grayscale-0"
         />
+      </motion.div>
+
+      {companyLogos.map((company) => (
+        <motion.div
+          key={company.name}
+          drag
+          dragConstraints={wrap}
+          dragElastic={0.12}
+          dragMomentum={false}
+          whileDrag={{ scale: 1.06, zIndex: 35 }}
+          whileHover={{ scale: 1.04 }}
+          tabIndex={0}
+          role="img"
+          aria-label={`${company.name} — professional experience`}
+          title={`Drag ${company.name}`}
+          className={`absolute z-30 grid touch-none select-none place-items-center rounded-lg border border-border bg-background/85 p-2 shadow-[var(--shadow-glass)] backdrop-blur-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${company.className}`}
+        >
+          <img src={company.image} alt={`${company.name} logo`} draggable={false} className="max-h-full max-w-full object-contain" />
+        </motion.div>
+      ))}
+
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute left-0 top-0 z-40 hidden rounded border border-border bg-ink px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-background shadow-[var(--shadow-glass)] md:block"
+        style={{ x: cursorX, y: cursorY }}
+        animate={{ opacity: isHovering ? 1 : 0, scale: isHovering ? 1 : 0.92 }}
+        transition={{ duration: 0.18 }}
+      >
+        sup folks!
       </motion.div>
       <div className="absolute inset-x-0 bottom-0 z-20 flex items-center justify-between border-t border-border bg-background/70 px-4 py-3 backdrop-blur-md">
         <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink-muted">West Java · Indonesia</span>

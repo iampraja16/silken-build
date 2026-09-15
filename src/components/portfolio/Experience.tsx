@@ -3,6 +3,15 @@ import { useRef, useState } from "react";
 
 const timeline = [
   {
+    year: "Aug 2026 — Present",
+    role: "AI Engineer",
+    org: "PT. Jasa Marga Tollroad Operator",
+    bullets: [
+      "Developing computer vision systems for automated traffic counting, transforming live roadway footage into reliable vehicle-flow data for operational monitoring and analysis.",
+      "Building a vision-based pothole detection solution to identify road-surface defects and support faster, data-informed maintenance decisions across toll road operations.",
+    ],
+  },
+  {
     year: "Aug 2025 — Jul 2026",
     role: "IoT Engineer",
     org: "PT. United Tractors Tbk",
