@@ -97,7 +97,7 @@ function ProjectVisual({ type }: { type: Project["visual"] }) {
 function ProjectCard({ project, onOpen }: { project: Project; onOpen: () => void }) {
   const reduceMotion = useReducedMotion();
   return (
-    <motion.article layoutId={`card-${project.index}`} whileHover={reduceMotion ? undefined : { y: -4, rotateX: 0.6, rotateY: -0.6 }} transition={{ duration: .45, ease: EASE }} className="group relative flex min-h-[470px] flex-col overflow-hidden rounded-lg border border-border bg-card/65 [transform-style:preserve-3d] focus-within:ring-1 focus-within:ring-ring md:col-span-6">
+    <motion.article layoutId={`card-${project.index}`} whileHover={reduceMotion ? undefined : { y: -4, rotateX: 0.6, rotateY: -0.6 }} transition={{ duration: .45, ease: EASE }} className="group relative flex min-h-[470px] flex-col overflow-hidden rounded-lg border border-border bg-card/65 [transform-style:preserve-3d] focus-within:ring-1 focus-within:ring-ring md:col-span-6 md:h-[480px]">
       <Button variant="ghost" onClick={onOpen} className="absolute inset-0 z-20 h-auto w-full rounded-lg p-0 opacity-0" aria-label={`Open ${project.title} project details`} />
       <div className="flex items-start justify-between gap-4 p-5 md:p-6">
         <div><p className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink-muted">{project.index} / {project.metric}</p><h3 className="mt-3 font-display text-2xl leading-tight text-ink md:text-3xl">{project.title}</h3><p className="mt-1 text-xs text-ink-muted">{project.subtitle}</p></div>
